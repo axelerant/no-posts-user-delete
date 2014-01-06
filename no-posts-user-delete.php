@@ -54,10 +54,10 @@ function npud_options_page() {
 			
 			// delete users (and their meta info) with no posts
 			//$wpdb->show_errors();
-			$sql = $wpdb->prepare("DELETE FROM {$tp}usermeta WHERE user_id NOT IN (SELECT DISTINCT post_author FROM {$tp}posts);");
+			$sql = $wpdb->prepare("DELETE FROM {$tp}usermeta WHERE user_id NOT IN (SELECT DISTINCT post_author FROM {$tp}posts);", $user_id);
 			$wpdb->query($sql);
 			//$wpdb->show_errors();
-			$sql = $wpdb->prepare("DELETE FROM {$tp}users WHERE ID NOT IN (SELECT DISTINCT post_author FROM {$tp}posts);");
+			$sql = $wpdb->prepare("DELETE FROM {$tp}users WHERE ID NOT IN (SELECT DISTINCT post_author FROM {$tp}posts);", $ID);
 			$wpdb->query($sql);  	
 
 		} else {
