@@ -3,7 +3,7 @@ Contributors: mcwebdesignro
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=office%40siteprezentare%2ero&lc=RO&item_name=MC%20Web%20Design%20Open%2dsource%20Wordpress%20Plugins&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: user delete, no posts, zero posts, admin delete
 Requires at least: 3.0
-Tested up to: 3.8
+Tested up to: 4.1.1
 Stable tag: 2.0
 License: GPLv2 or later
 
