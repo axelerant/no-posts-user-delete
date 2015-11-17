@@ -4,12 +4,12 @@ Plugin Name: No Posts User Delete
 Plugin URI: http://mcwebdesign.ro/2013/10/wordpress-delete-users-with-no-posts-plugin/
 Description: Removes users that have no posts, based on their role. After activating, you can find the plugin under "Users" menu.
 Author: MC Web Design
-Version: 2.0
+Version: 2.1RC1
 Author URI: http://www.mcwebdesign.ro/
 */
 
 
-$npud_version = '2.0';
+$npud_version = '2.1RC1';
 
 function npud_add_options_pages() {
 	if (function_exists('add_users_page')) {
