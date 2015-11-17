@@ -36,12 +36,12 @@ function npud_options_page() {
 	</div>
 
 	<p>Visit the <a href="http://mcwebdesign.ro/2013/10/wordpress-delete-users-with-no-posts-plugin/">plugin's homepage</a> for further details. If you find a bug or have a fantastic idea for this plugin, <a href="http://mcwebdesign.ro/contact/">ask me</a>!</p>
-	<p>Check the option <em>User has no posts</em>, choose the user's role you want to find and press the <em>Search</em> button.</p>
+	<p>Check the option <em>User has no posts or comments</em>, choose the user's role you want to find and press the <em>Search</em> button.</p>
 
 	<form enctype="multipart/form-data" method="POST" action="" id="no-posts-user-delete-form">
 	<input type="hidden" name="op" value="search_users" />
 		<table>
-			<tr><td align="center"><input id="flag_no_recs" type="checkbox" name="no_recs" value="yes" <?php echo empty($_POST['no_recs']) ? '' : 'checked' ?> /></td><td><label for="flag_no_recs"><?php echo __('User has no posts')?></label></td></tr>
+			<tr><td align="center"><input id="flag_no_recs" type="checkbox" name="no_recs" value="yes" <?php echo empty($_POST['no_recs']) ? '' : 'checked' ?> /></td><td><label for="flag_no_recs"><?php echo __('User has no posts or comments')?></label></td></tr>
 			<tr><td colspan="2">
 			<label for="user_role"><?php echo __('User role: &nbsp;')?></label>
 			<select name="user_role_eq">
@@ -52,6 +52,7 @@ function npud_options_page() {
 			}
 			?>
 			</select></td></tr>
+			<tr><td align="center"><input id="flag_just_delete" type="checkbox" name="just_delete" value="yes" <?php echo empty($_POST['just_delete']) ? '' : 'checked' ?> /></td><td><label for="flag_just_delete"><?php echo __('Delete Immediately')?></label></td></tr>
 			<tr><td colspan="2"><input type="submit" size="4" value="<?php echo __('Search')?>" /></td></tr>
 		</table>
 
@@ -74,7 +75,7 @@ function npud_options_page() {
             else 
             if ($_POST['op'] == 'finally_delete') {
             
-                echo "Deleting...<br />";
+                echo __("Deleting...") . "<br />";
                 $cnt_deleted = 0;
                 foreach($_POST['f_users'] as $user_id_to_delete) {
     
@@ -140,10 +141,13 @@ function npud_options_page() {
             }
         
 		//find users with no posts & count published posts
-        $query = "SELECT 
-					COUNT(WP.ID) as recs, WU.ID
-				FROM {$tp}users WU 
-				LEFT JOIN {$tp}posts WP ON WP.post_author = WU.ID AND NOT WP.post_type in ('attachment', 'revision') AND post_status = 'publish' GROUP BY WU.ID";			
+		$query = "SELECT
+		COUNT(WP.ID) AS recs, COUNT(WC.comment_ID) AS comments, WU.ID
+		FROM {$tp}users WU
+		LEFT JOIN {$tp}posts WP ON WP.post_author = WU.ID AND NOT WP.post_type IN ('attachment', 'revision') AND post_status = 'publish'
+		LEFT JOIN {$tp}comments WC ON WC.user_id = WU.ID AND WC.comment_approved = 1
+		GROUP BY WU.ID
+		        HAVING recs = 0 AND comments = 0";			
 
         $rows = $wpdb->get_results($query, ARRAY_A);
         
@@ -193,9 +197,14 @@ function npud_options_page() {
 				if ($UR['ID'] == $user_ID ) {
 					echo "-";
 				} else {
-					echo "<input type=\"checkbox\" name=\"f_users[]\" value=\"$UR[ID]\"/ " 
-                . (isset($_POST['f_users']) && in_array($UR['ID'], $_POST['f_users']) ? 'checked' : '') 
-                . ">";
+					if ( ! empty( $_POST['just_delete'] ) ) {
+						wp_delete_user( $UR['ID'] );
+						echo __( "Deleted" );
+					} else {
+						echo "<input type=\"checkbox\" name=\"f_users[]\" value=\"$UR[ID]\"/ " 
+							. (isset($_POST['f_users']) && in_array($UR['ID'], $_POST['f_users']) ? 'checked' : '') 
+							. ">";
+					}
 				}
 				echo "
 					</td><td align=\"left\">"
